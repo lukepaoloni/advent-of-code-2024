@@ -10,19 +10,46 @@ import (
 )
 
 func main() {
-	group1 := []int{}
-	group2 := []int{}
-
 	file, err := os.Open("./input.txt")
 
 	if err != nil {
 		fmt.Println("Error opening input.txt: ", err)
 	}
 
+	group1, group2, err := parseFile(file)
+
+	if err != nil {
+		fmt.Println("Error parsing input.txt:", err)
+	}
+
+	totalDistance := 0
+
+	for index, locationIdFromGroup1 := range group1 {
+		locationIdFromGroup2 := group2[index]
+
+		if locationIdFromGroup1 > locationIdFromGroup2 {
+			totalDistance += locationIdFromGroup1 - locationIdFromGroup2
+		} else {
+			totalDistance += locationIdFromGroup2 - locationIdFromGroup1
+		}
+	}
+
+	fmt.Printf("Total distance: %d\n", totalDistance)
+}
+
+func parseFile(file *os.File) ([]int, []int, error) {
+	group1 := []int{}
+	group2 := []int{}
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		locationIds := strings.Split(scanner.Text(), "   ")
+		line := scanner.Text()
+		locationIds := strings.Split(line, "   ")
+
+		if len(locationIds) < 2 {
+			return nil, nil, fmt.Errorf("expected 2 location IDs %q", line)
+		}
+
 		locationIdForGroup1, err := strconv.Atoi(locationIds[0])
 
 		if err != nil {
@@ -42,17 +69,5 @@ func main() {
 	slices.Sort(group1)
 	slices.Sort(group2)
 
-	totalDistance := 0
-
-	for index, locationIdFromGroup1 := range group1 {
-		locationIdFromGroup2 := group2[index]
-
-		if locationIdFromGroup1 > locationIdFromGroup2 {
-			totalDistance += locationIdFromGroup1 - locationIdFromGroup2
-		} else {
-			totalDistance += locationIdFromGroup2 - locationIdFromGroup1
-		}
-	}
-
-	fmt.Printf("Total distance: %d\n", totalDistance)
+	return group1, group2, nil
 }
