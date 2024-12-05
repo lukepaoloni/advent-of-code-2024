@@ -22,6 +22,11 @@ func main() {
 		fmt.Println("Error parsing input.txt:", err)
 	}
 
+	puzzleOne(group1, group2)
+	puzzleTwo(group1, group2)
+}
+
+func puzzleOne(group1 []int, group2 []int) {
 	totalDistance := 0
 
 	for index, locationIdFromGroup1 := range group1 {
@@ -35,6 +40,24 @@ func main() {
 	}
 
 	fmt.Printf("Total distance: %d\n", totalDistance)
+}
+
+func puzzleTwo(group1 []int, group2 []int) {
+	totalSimilarity := 0
+
+	for _, locationIdFromGroup1 := range group1 {
+		similarities := 0
+
+		for _, locationIdFromGroup2 := range group2 {
+			if locationIdFromGroup1 == locationIdFromGroup2 {
+				similarities++
+			}
+		}
+
+		totalSimilarity += locationIdFromGroup1 * similarities
+	}
+
+	fmt.Printf("Total similarity: %d\n", totalSimilarity)
 }
 
 func parseFile(file *os.File) ([]int, []int, error) {
