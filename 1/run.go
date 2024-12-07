@@ -44,17 +44,16 @@ func puzzleOne(group1 []int, group2 []int) {
 
 func puzzleTwo(group1 []int, group2 []int) {
 	totalSimilarity := 0
+	occurrencesInGroup2 := make(map[int]int)
+
+	for _, locationIdFromGroup2 := range group2 {
+		occurrencesInGroup2[locationIdFromGroup2]++
+	}
 
 	for _, locationIdFromGroup1 := range group1 {
-		similarities := 0
-
-		for _, locationIdFromGroup2 := range group2 {
-			if locationIdFromGroup1 == locationIdFromGroup2 {
-				similarities++
-			}
+		if similarities, exists := occurrencesInGroup2[locationIdFromGroup1]; exists {
+			totalSimilarity += locationIdFromGroup1 * similarities
 		}
-
-		totalSimilarity += locationIdFromGroup1 * similarities
 	}
 
 	fmt.Printf("Total similarity: %d\n", totalSimilarity)
