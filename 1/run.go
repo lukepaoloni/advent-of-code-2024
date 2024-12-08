@@ -30,9 +30,7 @@ func puzzleOne(group1 []int, group2 []int) {
 	totalDistance := 0
 
 	for index, locationIdFromGroup1 := range group1 {
-		locationIdFromGroup2 := group2[index]
-
-		if locationIdFromGroup1 > locationIdFromGroup2 {
+		if locationIdFromGroup2 := group2[index]; locationIdFromGroup1 > locationIdFromGroup2 {
 			totalDistance += locationIdFromGroup1 - locationIdFromGroup2
 		} else {
 			totalDistance += locationIdFromGroup2 - locationIdFromGroup1
