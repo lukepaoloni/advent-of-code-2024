@@ -38,6 +38,11 @@ func main() {
 		}
 
 		diff := secondLevel - firstLevel
+
+		if firstLevel > secondLevel {
+			diff = firstLevel - secondLevel
+		}
+
 		allIncreasing := diff > 0
 		safe = diff >= 1 && diff <= 3
 
