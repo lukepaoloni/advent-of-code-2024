@@ -29,4 +29,4 @@ In the example above, the reports can be found safe or unsafe by checking those 
 1 3 6 7 9: Safe because the levels are all increasing by 1, 2, or 3.
 So, in this example, 2 reports are safe.
 
-Analyze the unusual data from the engineers. How many reports are safe?
+Analyze the unusual data from the engineers. How many reports are safe? - 359 ✅
