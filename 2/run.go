@@ -13,7 +13,7 @@ type FileReader struct {
 }
 
 func (reader FileReader) ReadLines() ([]string, error) {
-	file, err := os.Open("./input.txt")
+	file, err := os.Open(reader.FilePath)
 
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s: %w", reader.FilePath, err)
