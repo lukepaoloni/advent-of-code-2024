@@ -44,7 +44,41 @@ func ParseLevelsFromLine(line string) ([]int, error) {
 	return intLevels, nil
 }
 
-func IsSafe(levels []int) bool {
+type SafeValidator interface {
+	IsSafe(levels []int) bool
+}
+
+type ReportValidator struct {
+	Reader    FileReader
+	Validator SafeValidator
+}
+
+func (reportValidator ReportValidator) SafeReports() ([]string, error) {
+	lines, err := reportValidator.Reader.ReadLines()
+
+	if err != nil {
+		return nil, err
+	}
+	safeReports := []string{}
+
+	for _, line := range lines {
+		levels, err := ParseLevelsFromLine(line)
+
+		if err != nil {
+			continue
+		}
+
+		if safe := reportValidator.Validator.IsSafe(levels); safe {
+			safeReports = append(safeReports, line)
+		}
+	}
+
+	return safeReports, nil
+}
+
+type BasicLevelValidator struct{}
+
+func (validator BasicLevelValidator) IsSafe(levels []int) bool {
 	safe := false
 
 	if len(levels) <= 1 {
@@ -89,26 +123,16 @@ func IsSafe(levels []int) bool {
 }
 
 func main() {
-	lines, err := FileReader{FilePath: "./input.txt"}.ReadLines()
+	puzzleOne := ReportValidator{
+		Reader:    FileReader{FilePath: "./input.txt"},
+		Validator: BasicLevelValidator{},
+	}
+	puzzleOneSafeReports, err := puzzleOne.SafeReports()
 
 	if err != nil {
 		fmt.Println("Error processing safety reports:", err)
 		return
 	}
-	safeReports := []string{}
 
-	for _, line := range lines {
-		levels, err := ParseLevelsFromLine(line)
-
-		if err != nil {
-			fmt.Println("Error parsing first level as integer.")
-			continue
-		}
-
-		if safe := IsSafe(levels); safe {
-			safeReports = append(safeReports, line)
-		}
-	}
-
-	fmt.Printf("Safe Reports: %d\n", len(safeReports))
+	fmt.Printf("Puzzle One - Safe Reports: %d\n", len(puzzleOneSafeReports))
 }
