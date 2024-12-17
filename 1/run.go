@@ -16,6 +16,8 @@ func main() {
 		fmt.Println("Error opening input.txt: ", err)
 	}
 
+	defer file.Close()
+
 	group1, group2, err := parseFile(file)
 
 	if err != nil {

@@ -15,6 +15,8 @@ func main() {
 		fmt.Println("Error opening input.txt: ", err)
 	}
 
+	defer file.Close()
+
 	scanner := bufio.NewScanner(file)
 	safeReports := []string{}
 
