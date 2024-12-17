@@ -71,3 +71,32 @@ func TestParseLevelsFromLine(t *testing.T) {
 		})
 	}
 }
+
+func TestIsSafe(t *testing.T) {
+	tests := []struct {
+		name         string
+		input        []int
+		expectIsSafe bool
+	}{
+		{
+			name:         "Safe levels",
+			input:        []int{10, 11, 12, 13, 14, 15},
+			expectIsSafe: true,
+		},
+		{
+			name:         "Unsafe levels",
+			input:        []int{10, 14, 15, 16, 17, 18},
+			expectIsSafe: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			safe := IsSafe(test.input)
+
+			if test.expectIsSafe && !safe {
+				t.Errorf("Expected levels to be safe for input: %v, but was deemed as unsafe", test.input)
+			}
+		})
+	}
+}

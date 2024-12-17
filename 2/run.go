@@ -44,6 +44,50 @@ func ParseLevelsFromLine(line string) ([]int, error) {
 	return intLevels, nil
 }
 
+func IsSafe(levels []int) bool {
+	safe := false
+
+	if len(levels) <= 1 {
+		return false
+	}
+
+	firstLevel := levels[0]
+	secondLevel := levels[1]
+
+	diff := secondLevel - firstLevel
+	allIncreasing := diff > 0
+
+	if firstLevel > secondLevel {
+		diff = firstLevel - secondLevel
+	}
+	safe = diff >= 1 && diff <= 3
+
+	for i := 1; i < len(levels)-1 && safe; i++ {
+		level := levels[i]
+		nextLevel := levels[i+1]
+
+		diff = nextLevel - level
+
+		increasing := diff > 0
+
+		if !increasing && diff < 0 {
+			diff = level - nextLevel
+		}
+
+		eitherAllIncreasingOrDecreasing := allIncreasing && increasing || !allIncreasing && !increasing
+
+		if !eitherAllIncreasingOrDecreasing {
+			safe = false
+		}
+
+		if diff < 1 || diff > 3 {
+			safe = false
+		}
+	}
+
+	return safe
+}
+
 func main() {
 	lines, err := FileReader{FilePath: "./input.txt"}.ReadLines()
 
@@ -53,55 +97,15 @@ func main() {
 	}
 	safeReports := []string{}
 
-	for i, line := range lines {
+	for _, line := range lines {
 		levels, err := ParseLevelsFromLine(line)
-		safe := false
 
 		if err != nil {
 			fmt.Println("Error parsing first level as integer.")
 			continue
 		}
 
-		if len(levels) <= 1 {
-			fmt.Printf("Line %d does not have enough levels reported.", i)
-			return
-		}
-
-		firstLevel := levels[0]
-		secondLevel := levels[1]
-
-		diff := secondLevel - firstLevel
-		allIncreasing := diff > 0
-
-		if firstLevel > secondLevel {
-			diff = firstLevel - secondLevel
-		}
-		safe = diff >= 1 && diff <= 3
-
-		for i := 1; i < len(levels)-1 && safe; i++ {
-			level := levels[i]
-			nextLevel := levels[i+1]
-
-			diff = nextLevel - level
-
-			increasing := diff > 0
-
-			if !increasing && diff < 0 {
-				diff = level - nextLevel
-			}
-
-			eitherAllIncreasingOrDecreasing := allIncreasing && increasing || !allIncreasing && !increasing
-
-			if !eitherAllIncreasingOrDecreasing {
-				safe = false
-			}
-
-			if diff < 1 || diff > 3 {
-				safe = false
-			}
-		}
-
-		if safe {
+		if safe := IsSafe(levels); safe {
 			safeReports = append(safeReports, line)
 		}
 	}
