@@ -31,6 +31,19 @@ func (reader FileReader) ReadLines() ([]string, error) {
 	return lines, scanner.Err()
 }
 
+func ParseLevelsFromLine(line string) ([]int, error) {
+	strLevels := strings.Split(line, " ")
+	intLevels := make([]int, len(strLevels))
+	for i, str := range strLevels {
+		level, err := strconv.Atoi(str)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing level %s as integer: %w", str, err)
+		}
+		intLevels[i] = level
+	}
+	return intLevels, nil
+}
+
 func main() {
 	lines, err := FileReader{FilePath: "./input.txt"}.ReadLines()
 
@@ -40,23 +53,22 @@ func main() {
 	}
 	safeReports := []string{}
 
-	for _, line := range lines {
-		levels := strings.Split(line, " ")
+	for i, line := range lines {
+		levels, err := ParseLevelsFromLine(line)
 		safe := false
-
-		firstLevel, err := strconv.Atoi(levels[0])
 
 		if err != nil {
 			fmt.Println("Error parsing first level as integer.")
 			continue
 		}
 
-		secondLevel, err := strconv.Atoi(levels[1])
-
-		if err != nil {
-			fmt.Println("Error parsing second level as integer.")
-			continue
+		if len(levels) <= 1 {
+			fmt.Printf("Line %d does not have enough levels reported.", i)
+			return
 		}
+
+		firstLevel := levels[0]
+		secondLevel := levels[1]
 
 		diff := secondLevel - firstLevel
 		allIncreasing := diff > 0
@@ -67,21 +79,8 @@ func main() {
 		safe = diff >= 1 && diff <= 3
 
 		for i := 1; i < len(levels)-1 && safe; i++ {
-			level, err := strconv.Atoi(levels[i])
-
-			if err != nil {
-				fmt.Println("Error parsing level as integer.")
-				safe = false
-				continue
-			}
-
-			nextLevel, err := strconv.Atoi(levels[i+1])
-
-			if err != nil {
-				fmt.Println("Error parsing next level as integer.")
-				safe = false
-				continue
-			}
+			level := levels[i]
+			nextLevel := levels[i+1]
 
 			diff = nextLevel - level
 
