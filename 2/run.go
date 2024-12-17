@@ -8,20 +8,39 @@ import (
 	"strings"
 )
 
-func main() {
+type FileReader struct {
+	FilePath string
+}
+
+func (reader FileReader) ReadLines() ([]string, error) {
 	file, err := os.Open("./input.txt")
 
 	if err != nil {
-		fmt.Println("Error opening input.txt: ", err)
+		return nil, fmt.Errorf("error opening %s: %w", reader.FilePath, err)
 	}
 
 	defer file.Close()
 
+	var lines []string
 	scanner := bufio.NewScanner(file)
-	safeReports := []string{}
-
 	for scanner.Scan() {
 		line := scanner.Text()
+		lines = append(lines, line)
+	}
+
+	return lines, scanner.Err()
+}
+
+func main() {
+	lines, err := FileReader{FilePath: "./input.txt"}.ReadLines()
+
+	if err != nil {
+		fmt.Println("Error processing safety reports:", err)
+		return
+	}
+	safeReports := []string{}
+
+	for _, line := range lines {
 		levels := strings.Split(line, " ")
 		safe := false
 
