@@ -82,3 +82,56 @@ func (validator BasicLevelValidator) IsSafe(levels []int) bool {
 
 	return safe
 }
+
+type DampenedLevelValidator struct{}
+
+func (validator DampenedLevelValidator) IsSafe(levels []int) bool {
+	// First check if the sequence is already safe without dampening
+	if isSequenceSafe(levels) {
+		return true
+	}
+
+	// Try removing each number one at a time
+	for i := range levels {
+		// Create a new slice without the current number
+		dampened := make([]int, 0, len(levels)-1)
+		dampened = append(dampened, levels[:i]...)
+		dampened = append(dampened, levels[i+1:]...)
+
+		// Check if this dampened sequence is safe
+		if isSequenceSafe(dampened) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isSequenceSafe(levels []int) bool {
+	if len(levels) <= 1 {
+		return false
+	}
+
+	// Determine if sequence should be increasing or decreasing
+	increasing := levels[1] > levels[0]
+
+	for i := 0; i < len(levels)-1; i++ {
+		diff := levels[i+1] - levels[i]
+
+		// Check if direction matches and difference is within bounds
+		if (increasing && diff <= 0) || (!increasing && diff >= 0) {
+			return false
+		}
+
+		absDiff := diff
+		if diff < 0 {
+			absDiff = -diff
+		}
+
+		if absDiff < 1 || absDiff > 3 {
+			return false
+		}
+	}
+
+	return true
+}

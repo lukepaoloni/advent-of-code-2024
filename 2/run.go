@@ -20,4 +20,17 @@ func main() {
 	}
 
 	fmt.Printf("Puzzle One - Safe Reports: %d\n", len(puzzleOneSafeReports))
+
+	puzzleTwo := validator.ReportValidator{
+		Reader:    reader.FileReader{FilePath: "./input.txt"},
+		Validator: validator.DampenedLevelValidator{},
+	}
+	puzzleTwoSafeReports, err := puzzleTwo.SafeReports()
+
+	if err != nil {
+		fmt.Println("Error processing safety reports:", err)
+		return
+	}
+
+	fmt.Printf("Puzzle Two - Safe Reports: %d\n", len(puzzleTwoSafeReports))
 }
