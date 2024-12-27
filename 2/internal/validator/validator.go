@@ -40,6 +40,30 @@ func (reportValidator ReportValidator) SafeReports() ([]string, error) {
 type BasicLevelValidator struct{}
 
 func (validator BasicLevelValidator) IsSafe(levels []int) bool {
+	return isSequenceSafe(levels)
+}
+
+type DampenedLevelValidator struct{}
+
+func (validator DampenedLevelValidator) IsSafe(levels []int) bool {
+	if isSequenceSafe(levels) {
+		return true
+	}
+
+	for i := range levels {
+		dampened := []int{}
+		dampened = append(dampened, levels[:i]...)
+		dampened = append(dampened, levels[i+1:]...)
+
+		if isSequenceSafe(dampened) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isSequenceSafe(levels []int) bool {
 	safe := false
 
 	if len(levels) <= 1 {
